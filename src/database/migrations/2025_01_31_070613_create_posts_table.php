@@ -15,7 +15,7 @@ class CreatePostsTable extends Migration
             $table->char('uuid', 36)->primary();
             $table->char('user_uuid', 36);
             $table->text('content');
-            $table->char('file_uuid', 36);
+            $table->char('file_uuid', 36)->nullable();
 
             $table->timestamps();
         });

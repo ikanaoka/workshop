@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
             $table->char('uuid', 36)->primary();
             $table->string('user_name', 255);
             $table->string('password', 255);
-            $table->timestamp('last_login_at');
+            $table->timestamp('last_login_at')->nullable();
 
             $table->timestamps();
         });

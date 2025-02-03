@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Model
+class User extends Authenticatable
 {
     use HasFactory;
 
@@ -18,14 +19,7 @@ class User extends Model
 
     protected $primaryKey = 'uuid';
 
-    public $timestamps = true;
+    protected $keyType = 'string';
 
-    protected static function booted()
-    {
-        static::creating(function ($user) {
-            if (empty($user->uuid)) {
-                $user->uuid = (string) \Str::uuid();
-            }
-        });
-    }
+    public $timestamps = true;
 }
