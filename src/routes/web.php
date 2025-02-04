@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Main\BoardController;
+use App\Http\Controllers\Main\LikeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -23,6 +24,11 @@ Route::middleware(['auth'])->group(function () {
     //ボード画面
     Route::get('/home', [BoardController::class, 'show'])->name('home');
     Route::post('/home/post', [BoardController::class, 'post'])->name('home.post');
+    Route::post('/home/like', [BoardController::class, 'like']);
+    Route::delete('/home/like', [BoardController::class, 'dislike']);
+
+    //お気に入り画面
+    Route::get('/home/like/show', [LikeController::class, 'show'])->name('home.like.show');
 });
 
 

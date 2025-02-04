@@ -31,6 +31,9 @@ class LoginController extends Controller
         $request->validate([
             'user_name' => 'required',
             'password' => 'required',
+        ], [], [
+            'user_name' => 'ユーザー名',   
+            'password' => 'パスワード',     
         ]);
 
         $user = User::where('user_name', $request->user_name)->first();

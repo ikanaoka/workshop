@@ -4,17 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class File extends Model
+class Like extends Model
 {
-    protected $table = 'files';
-    
+    protected $table = 'likes';
+
     protected $primaryKey = 'uuid';
 
     public $incrementing = false;
 
     protected $keyType = 'string';
 
-    protected $fillable = ['uuid', 'file_name'];
+    protected $fillable = ['uuid', 'user_uuid', 'post_uuid'];
 
     public $timestamps = true;
 }

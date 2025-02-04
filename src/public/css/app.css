@@ -161,6 +161,8 @@ header {
 }
 .posted_title_container {
     padding: 10px;
+    display: flex;
+    align-items: center;
 }
 .photo_container {
     display: flex;
@@ -179,6 +181,26 @@ header {
     justify-content: start;
     padding: 0px 20px 20px 20px;
 }
+.heart_icon {
+    margin-left: 20px;
+    cursor: pointer;
+    width: 20px;
+}
+.heart_icon_red {
+    margin-left: 20px;
+    cursor: pointer;
+    width: 20px;    
+}
+.like_count {
+    color: grey;
+    margin-left: 10px;
+    font-size: 13px;
+}
+.button.liked_posts {
+    margin-right: 50px;
+    display: flex;
+    align-items: center;
+}
 @media screen and (max-width: 1000px) {
     .login_form_container {
         width: 260px;
@@ -194,5 +216,12 @@ header {
     }
     .post_content {
         width: 320px;
+    }
+    .user_name {
+        display: none;
+    }
+    header {
+        justify-content: space-between;
+        padding: 0 30px 0 30px;
     }
 }

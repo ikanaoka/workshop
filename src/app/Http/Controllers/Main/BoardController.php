@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Post;
 use App\Models\File;
+use App\Models\Like;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class BoardController extends Controller
 {
@@ -25,15 +27,22 @@ class BoardController extends Controller
         $posts = Post::select([
             'posts.*',
             'users.user_name',
-            'files.file_name'
+            'files.file_name',
+            DB::raw('COUNT(likes.uuid) as like_count')
         ])
         ->join('users', 'posts.user_uuid', '=', 'users.uuid')
         ->leftJoin('files', 'posts.file_uuid', '=', 'files.uuid')
+        ->leftJoin('likes', 'posts.uuid', '=', 'likes.post_uuid')
+        ->groupBy('posts.uuid')
         ->orderByDesc('posts.created_at')
         ->limit(20)
         ->get();
 
+        $likes = Like::where('user_uuid', $user->uuid)->get()->keyBy('post_uuid');
+
         foreach ($posts as $post) {
+            $post->liked_by_user = isset($likes[$post->uuid]);
+            
             if ($post->file_uuid) {
                 $extension = pathinfo($post->file_name, PATHINFO_EXTENSION);
                 $post->file_url = Storage::disk('s3')->url('uploads/' . $post->file_uuid . '.' . $extension);
@@ -42,7 +51,7 @@ class BoardController extends Controller
             }
         }
 
-        return view('main.board', compact('user', 'posts'));
+        return view('main.board', compact('user', 'posts', 'likes'));
     }
 
     /**
@@ -81,5 +90,51 @@ class BoardController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * いいね登録処理
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function like(Request $request)
+    {
+        $user = Auth::user();
+
+        $post = Post::where('uuid', $request->post_uuid)->first();
+
+        $like = Like::where('user_uuid', $user->uuid)->where('post_uuid', $post->uuid)->first();
+
+        if (!$like) {
+            Like::create([
+                'uuid' => Str::uuid()->toString(),
+                'user_uuid' => $user->uuid,
+                'post_uuid' => $post->uuid,
+            ]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * いいね削除処理
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function dislike(Request $request)
+    {
+        $user = Auth::user();
+
+        $post = Post::where('uuid', $request->post_uuid)->first();
+
+        $like = Like::where('user_uuid', $user->uuid)->where('post_uuid', $post->uuid)->first();
+
+        if($like) {
+            $like->delete();
+        }
+
+        return response()->json(['success' => true]);
     }
 }

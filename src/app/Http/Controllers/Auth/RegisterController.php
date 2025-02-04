@@ -32,6 +32,9 @@ class RegisterController extends Controller
         $request->validate([
             'user_name' => 'required|string|max:255|unique:users,user_name',  
             'password' => 'required|string|confirmed',            
+        ], [], [
+            'user_name' => 'ユーザー名',   
+            'password' => 'パスワード',     
         ]);
 
         //ユーザー登録

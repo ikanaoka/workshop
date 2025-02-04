@@ -3,31 +3,13 @@
     @include('layouts.head')
     <body>
         <header>
-            <button class="button liked_posts" id="liked_posts">
-                <img src="{{ asset('images/arrow-through-heart-fill-white.svg') }}">
-                お気に入り
+            <button class="button liked_posts" id="main_posts">
+                戻る
             </button>
             <span class="user_name">{{ $user->user_name }}</span>
             <button class="button" id="logout">ログアウト</button>
         </header>
         <div class="main_body">
-            <form method="POST" action="{{ route('home.post') }}" enctype="multipart/form-data">
-            @csrf
-                <div class="post_container">
-                    <textarea class="post_content" type="text" name="content" placeholder="{!! $user->user_name !!}さん、お元気ですか？"></textarea>
-                    <div class="post_button_container">
-                        <div class="photo_container">
-                            <image class="camera_icon" id="attach" src="{{ asset('images/camera-fill.svg') }}">
-                            <span class="photo_name"></span>
-                        </div>
-                        <input type="file" name="file" id="file-input" accept="image/*" style="display: none;">
-                        <button class="submit_button no_margin" id="post">
-                            <image class="small_icon" src="{{ asset('images/send.svg') }}">
-                            投稿する
-                        </button>
-                    </div>
-                </div>
-            </form>
             <div class="posted_list_container">
                 @if (!empty($posts))
                     @foreach($posts as $post)
@@ -135,7 +117,7 @@
         });
     });
 
-    $('#liked_posts').on('click', function (){
-        window.location.href = '/home/like/show';
+    $('#main_posts').on('click', function (){
+        window.location.href = '/home';
     });
 </script>
