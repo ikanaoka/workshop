@@ -28,11 +28,13 @@ class BoardController extends Controller
             'posts.*',
             'users.user_name',
             'files.file_name',
-            DB::raw('COUNT(likes.uuid) as like_count')
+            DB::raw('COUNT(likes.uuid) as like_count'),
+            DB::raw('COUNT(replies.uuid) as reply_count')
         ])
         ->join('users', 'posts.user_uuid', '=', 'users.uuid')
         ->leftJoin('files', 'posts.file_uuid', '=', 'files.uuid')
         ->leftJoin('likes', 'posts.uuid', '=', 'likes.post_uuid')
+        ->leftJoin('replies', 'posts.uuid', '=', 'replies.post_uuid')
         ->groupBy('posts.uuid')
         ->orderByDesc('posts.created_at')
         ->limit(20)

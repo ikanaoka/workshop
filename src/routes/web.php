@@ -6,10 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Main\BoardController;
 use App\Http\Controllers\Main\LikeController;
-
-Route::get('/', function () {
-    return view('welcome');
-});
+use App\Http\Controllers\Main\ReplyController;
 
 //ログイン画面
 Route::get('/login', [LoginController::class, 'show'])->name('login');
@@ -29,6 +26,14 @@ Route::middleware(['auth'])->group(function () {
 
     //お気に入り画面
     Route::get('/home/like/show', [LikeController::class, 'show'])->name('home.like.show');
+
+    //返信画面
+    Route::get('/home/reply/show', [ReplyController::class, 'show'])->name('home.reply.show');
+    Route::post('/home/reply/post', [ReplyController::class, 'reply'])->name('home.reply.post');
+
+    Route::get('/', function () {
+        return view('welcome');
+    });
 });
 
 

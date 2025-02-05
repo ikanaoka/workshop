@@ -3,18 +3,18 @@
     @include('layouts.head')
     <body>
         <header>
-            <button class="button liked_posts" id="liked_posts">
-                <img src="{{ asset('images/arrow-through-heart-fill-white.svg') }}">
-                お気に入り
+            <button class="button liked_posts" id="main_posts">
+                戻る
             </button>
             <span class="user_name">{{ $user->user_name }}</span>
             <button class="button" id="logout">ログアウト</button>
         </header>
         <div class="main_body">
-            <form method="POST" action="{{ route('home.post') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('home.reply.post') }}" enctype="multipart/form-data">
             @csrf
                 <div class="post_container">
-                    <textarea class="post_content" type="text" name="content" placeholder="{!! $user->user_name !!}さん、お元気ですか？"></textarea>
+                    <input type="hidden" name="post_uuid" value="{{ $post->uuid }}">
+                    <textarea class="post_content" type="text" name="content" placeholder="{!! $post->user_name !!}さんの投稿に返信しましょう！"></textarea>
                     <div class="post_button_container">
                         <div class="photo_container">
                             <image class="camera_icon" id="attach" src="{{ asset('images/camera-fill.svg') }}">
@@ -23,42 +23,48 @@
                         <input type="file" name="file" id="file-input" accept="image/*" style="display: none;">
                         <button class="submit_button no_margin" id="post">
                             <image class="small_icon" src="{{ asset('images/send.svg') }}">
-                            投稿する
+                            返信する
                         </button>
                     </div>
                 </div>
             </form>
             <div class="posted_list_container">
-                @if (!empty($posts))
-                    @foreach($posts as $post)
-                    <div class="posted_item_container">
-                        <div class="posted_title_container">
-                            <span class="posted_user_name">{{ $post->user_name }}</span>
-                            <span class="posted_time">{{ $post->created_at }}</span>
-                            <img class="heart_icon" src="{{ asset('images/arrow-through-heart.svg') }}" data-post-uuid="{{ $post->uuid }}" data-user-uuid="{{ $user->uuid }}" @if($post->liked_by_user) style="display: none;" @endif>
-                            <img class="heart_icon_red" src="{{ asset('images/arrow-through-heart-fill.svg') }}" data-post-uuid="{{ $post->uuid }}" data-user-uuid="{{ $user->uuid }}" @if(!$post->liked_by_user) style="display: none;" @endif>
-                            <span class="like_count">{{ $post->like_count }}</span>
+                <div class="posted_item_container">
+                    <div class="posted_title_container">
+                        <span class="posted_user_name">{{ $post->user_name }}</span>
+                        <span class="posted_time">{{ $post->created_at }}</span>
+                        <img class="heart_icon" src="{{ asset('images/arrow-through-heart.svg') }}" data-post-uuid="{{ $post->uuid }}" data-user-uuid="{{ $user->uuid }}" @if($post->liked_by_user) style="display: none;" @endif>
+                        <img class="heart_icon_red" src="{{ asset('images/arrow-through-heart-fill.svg') }}" data-post-uuid="{{ $post->uuid }}" data-user-uuid="{{ $user->uuid }}" @if(!$post->liked_by_user) style="display: none;" @endif>
+                        <span class="like_count">{{ $post->like_count }}</span>
+                    </div>
+                    <div class="posted_content">{!! nl2br(e($post->content)) !!}</div>
+                    @if (!is_null($post->file_url))
+                        <div class="posted_photo_container"> 
+                            <img class="posted_photo" src="{{ $post->file_url }}">
                         </div>
-                        <div class="posted_content">{!! nl2br(e($post->content)) !!}</div>
-                        @if (!is_null($post->file_url))
-                            <div class="posted_photo_container"> 
-                                <img class="posted_photo" src="{{ $post->file_url }}">
+                    @endif
+                </div>
+            </div>
+            @if ($replies->isNotEmpty())
+                <span class="reply_count">{{ $replies->count() }}件の返信</span>
+                <div class="posted_list_container">
+                    @foreach ($replies as $reply)
+                        <div class="posted_item_container">
+                            <div class="posted_title_container">
+                                <img class="reply_black_icon" src="{{ asset('images/arrow-return-right-black.svg') }}">
+                                <span class="posted_user_name">{{ $reply->user_name }}</span>
+                                <span class="posted_time">{{ $reply->created_at }}</span>
                             </div>
-                        @endif
-                        <div class="reply_container between">
-                            <div class="reply_container pointer">
-                                <img class="reply_icon" src="{{ asset('images/arrow-return-right.svg') }}">
-                                <span>返信</span>
-                                <input type="hidden" value="{{ $post->uuid }}">
-                            </div>
-                            @if($post->reply_count > 0)
-                                <span class="reply_total">{{ $post->reply_count }}件</span>
+                            <div class="posted_content">{!! nl2br(e($reply->content)) !!}</div>
+                            @if (!is_null($reply->file_url))
+                                <div class="posted_photo_container"> 
+                                    <img class="posted_photo" src="{{ $reply->file_url }}">
+                                </div>
                             @endif
                         </div>
-                    </div>
                     @endforeach
-                @endif
-            </div>
+                </div>
+            @endif
         </div>
     </body>
 </html>
@@ -145,12 +151,7 @@
         });
     });
 
-    $('#liked_posts').on('click', function (){
-        window.location.href = '/home/like/show';
-    });
-
-    $('.reply_container.pointer').on('click', function (){
-        var postUuid = $(this).children('input').val();
-        window.location.href = '/home/reply/show?post_uuid=' + postUuid;
+    $('#main_posts').on('click', function (){
+        window.location.href = '/home';
     });
 </script>
