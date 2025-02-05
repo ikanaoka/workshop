@@ -215,6 +215,7 @@ header {
 }
 .reply_container.pointer {
     cursor: pointer;
+    border-top: none;
 }
 .reply_black_icon {
     margin-right: 10px;

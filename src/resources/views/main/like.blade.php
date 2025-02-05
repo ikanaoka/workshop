@@ -27,6 +27,16 @@
                                 <img class="posted_photo" src="{{ $post->file_url }}">
                             </div>
                         @endif
+                        <div class="reply_container between">
+                            <div class="reply_container pointer">
+                                <img class="reply_icon" src="{{ asset('images/arrow-return-right.svg') }}">
+                                <span>返信</span>
+                                <input type="hidden" value="{{ $post->uuid }}">
+                            </div>
+                            @if($post->reply_count > 0)
+                                <span class="reply_total">{{ $post->reply_count }}件</span>
+                            @endif
+                        </div>
                     </div>
                     @endforeach
                 @endif
@@ -119,5 +129,10 @@
 
     $('#main_posts').on('click', function (){
         window.location.href = '/home';
+    });
+
+    $('.reply_container.pointer').on('click', function (){
+        var postUuid = $(this).children('input').val();
+        window.location.href = '/home/reply/show?post_uuid=' + postUuid;
     });
 </script>
